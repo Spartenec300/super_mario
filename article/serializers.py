@@ -16,20 +16,10 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Article
         fields = ('id', 'title', 'description', 'body', 'author_id')
 
-    title = serializers.CharField(max_length=120)
-    description = serializers.CharField()
-    body = serializers.CharField()
-    author_id = serializers.IntegerField()
-
-    def delete(self, request, pk):
-        article = get_object_or_404(Article.objects.get(pk=pk))
-        article.delete()
-        return Response({"message": "Article with id `{}` has been deleted.".format(pk)}, status=204)
-
-class PostDetailsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Article
-        fields = ('id', 'title', 'description', 'author_id')
+    # title = serializers.CharField(max_length=120)
+    # description = serializers.CharField()
+    # body = serializers.CharField()
+    # author_id = serializers.IntegerField()
 
     def _get_image_url(self, obj):
         request = self.context.get('request')
@@ -43,6 +33,27 @@ class PostDetailsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Article.objects.create(**validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['category'] = CategorySerializer(instance.category.all(), many=True).data
+        representation['image'] = self._get_image_url(instance)
+        if "comment" not in self.fields:
+            representation['comments'] = CommentSerializer(instance.comment_set.all(), many=True).data
+        return representation
+
+    def delete(self, request, pk):
+        article = get_object_or_404(Article.objects.get(pk=pk))
+        article.delete()
+        return Response({"message": "Article with id `{}` has been deleted.".format(pk)}, status=204)
+
+class ArticleDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ('id', 'title', 'description', 'author_id', 'image')
+
+
+
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

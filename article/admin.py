@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Article, ArticleImage, Author, Category, Comment
+from .models import Article, Admin, Category, Comment, ArticleImage
+from account.models import User
+
 
 class ImageInLine(admin.TabularInline):
     model = ArticleImage
@@ -16,6 +18,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Article, ArticleAdmin)
-admin.site.register(Author)
 admin.site.register(Category)
 admin.site.register(Comment)
+admin.site.register(User)
+admin.site.register(Admin)

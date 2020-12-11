@@ -36,8 +36,6 @@ class ActivationView(APIView):
         return Response('Ваш аккаунт успешно активирован')
 
 
-
-
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
 

@@ -1,11 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ModelViewSet
+
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, generics
 from .permissions import ArticlePermission, IsCommentAuthor, IsArticleAuthor
 
-from .models import Article, Comment
-from .serializers import ArticleSerializer, CommentSerializer
+from .models import Article, Comment, Category
+from .serializers import ArticleSerializer, CommentSerializer, CategorySerializer
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
@@ -35,7 +35,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             permissions = []
-
         else:
             permissions = [IsCommentAuthor, ]
         return [permission() for permission in permissions]
+
+
+class CategoryListView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
